@@ -991,6 +991,7 @@ function drawGrid3(ctx, w, h, cells) {
 }
 
 function drawMathChallenge(challenge, ctx, w, h) {
+  const textScale = 1.2;
   ctx.clearRect(0, 0, w, h);
   ctx.fillStyle = '#1e232b';
   ctx.fillRect(0, 0, w, h);
@@ -1006,13 +1007,13 @@ function drawMathChallenge(challenge, ctx, w, h) {
   }
 
   if (challenge.type === 'linear-seq') {
-    ctx.font = `${Math.floor(Math.min(w, h) * 0.11)}px Inter`;
+    ctx.font = `${Math.floor(Math.min(w, h) * 0.11 * textScale)}px Inter`;
     ctx.fillText(challenge.data.text, w / 2, h / 2);
     return;
   }
 
   if (challenge.type === 'pair-equation') {
-    ctx.font = `${Math.floor(Math.min(w, h) * 0.11)}px Inter`;
+    ctx.font = `${Math.floor(Math.min(w, h) * 0.11 * textScale)}px Inter`;
     const startY = h * 0.28;
     const gap = h * 0.14;
     challenge.data.rows.forEach((row, i) => {
@@ -1024,7 +1025,7 @@ function drawMathChallenge(challenge, ctx, w, h) {
 
   if (challenge.type === 'equation-system') {
     const lines = challenge.data.lines;
-    ctx.font = `${Math.floor(Math.min(w, h) * 0.12)}px Inter`;
+    ctx.font = `${Math.floor(Math.min(w, h) * 0.12 * textScale)}px Inter`;
     const startY = h * 0.40;
     const gap = h * 0.13;
     lines.forEach((line, i) => {
@@ -1034,7 +1035,7 @@ function drawMathChallenge(challenge, ctx, w, h) {
   }
 
   if (challenge.type === 'arithmetic-expression' || challenge.type === 'exponent-expression') {
-    ctx.font = `${Math.floor(Math.min(w, h) * 0.12)}px Inter`;
+    ctx.font = `${Math.floor(Math.min(w, h) * 0.12 * textScale)}px Inter`;
     ctx.fillText(challenge.data.expression, w / 2, h / 2);
     return;
   }
@@ -1048,7 +1049,7 @@ function drawMathChallenge(challenge, ctx, w, h) {
     ];
     const tris = [t1, t2, t3];
 
-    ctx.font = `${Math.floor(Math.min(w, h) * 0.10)}px Inter`;
+    ctx.font = `${Math.floor(Math.min(w, h) * 0.10 * textScale)}px Inter`;
 
     tris.forEach((t, idx) => {
       const [cx, cy] = positions[idx];
@@ -1078,7 +1079,7 @@ function drawMathChallenge(challenge, ctx, w, h) {
       ctx.fillText(text, x + cell / 2, y + cell / 2);
     }
 
-    ctx.font = `${Math.floor(cell * 0.42)}px Inter`;
+    ctx.font = `${Math.floor(cell * 0.48)}px Inter`;
     for (let i = 0; i < 4; i += 1) box(startX + i * cell, startY, String(top[i]));
     for (let i = 0; i < 3; i += 1) {
       const t = missingSpot === 0 && i === 2 ? '?' : String(row2[i]);
@@ -1113,7 +1114,7 @@ function drawMathChallenge(challenge, ctx, w, h) {
       ctx.stroke();
     }
 
-    ctx.font = `${Math.floor(cell * 0.42)}px Inter`;
+    ctx.font = `${Math.floor(cell * 0.48)}px Inter`;
     rows.forEach((row, r) => {
       row.forEach((val, c) => {
         ctx.fillText(val === null ? '?' : String(val), x + c * cell + cell / 2, y + r * cell + cell / 2);
@@ -1139,7 +1140,7 @@ function drawMathChallenge(challenge, ctx, w, h) {
     ctx.closePath();
     ctx.stroke();
 
-    ctx.font = `${Math.floor(r * 0.32)}px Inter`;
+    ctx.font = `${Math.floor(r * 0.38)}px Inter`;
     challenge.data.labels.forEach((label, i) => {
       const angle = (-Math.PI / 2) + (i * Math.PI) / 4;
       const lr = r * 1.38;
@@ -1161,7 +1162,7 @@ function drawMathChallenge(challenge, ctx, w, h) {
     ctx.lineTo(refX + unit / 2, refY);
     ctx.stroke();
 
-    ctx.font = `${Math.floor(unit * 0.34)}px Inter`;
+    ctx.font = `${Math.floor(unit * 0.4)}px Inter`;
     ctx.textAlign = 'left';
     ctx.fillText('= 5', refX + unit, refY);
 
@@ -1197,7 +1198,7 @@ function drawMathChallenge(challenge, ctx, w, h) {
     const startX = w / 2 - spacing * 2;
     const y = h / 2;
 
-    ctx.font = `${Math.floor(Math.min(w, h) * 0.11)}px Inter`;
+    ctx.font = `${Math.floor(Math.min(w, h) * 0.11 * textScale)}px Inter`;
     ctx.textAlign = 'center';
     for (let i = 0; i < 5; i += 1) {
       const x = startX + i * spacing;
@@ -1218,7 +1219,7 @@ function drawMathChallenge(challenge, ctx, w, h) {
     const cy = h / 2;
     const d = Math.min(w, h) * 0.22;
 
-    ctx.font = `${Math.floor(Math.min(w, h) * 0.12)}px Inter`;
+    ctx.font = `${Math.floor(Math.min(w, h) * 0.12 * textScale)}px Inter`;
     ctx.fillText(String(up), cx, cy - d);
     ctx.fillText(String(left), cx - d, cy);
     ctx.fillText('?', cx, cy);
@@ -1239,7 +1240,7 @@ function drawMathChallenge(challenge, ctx, w, h) {
   const cx = w / 2;
   const cy = h / 2;
   const r = Math.min(w, h) * 0.24;
-  ctx.font = `${Math.floor(Math.min(w, h) * 0.095)}px Inter`;
+  ctx.font = `${Math.floor(Math.min(w, h) * 0.11)}px Inter`;
   for (let i = 0; i < 6; i += 1) {
     const angle = (-Math.PI / 2) + (i * Math.PI) / 3;
     const x = cx + Math.cos(angle) * r;

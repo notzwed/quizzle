@@ -1,12 +1,10 @@
-const CACHE_NAME = 'quizzle-cache-v1';
+const CACHE_NAME = 'quizzle-cache-v2';
 const ASSETS = [
   './',
   './index.html',
   './styles.css',
   './app.js',
   './manifest.webmanifest',
-  './icons/qi-any.svg',
-  './icons/qi-maskable.svg',
   './icons/Quizzly.svg',
   './icons/Quizzly (1).svg',
   './icons/Quizzly (2).svg',
