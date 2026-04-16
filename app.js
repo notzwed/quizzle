@@ -750,7 +750,7 @@ function renderMain() {
               <span>Math Riddles</span>
             </button>
             <button class="main-btn game-pill" data-action="go-wordle">
-              <img src="icons/output-onlinepngtools.svg" alt="" class="game-icon" />
+              <span class="play-outline"></span>
               <span>Wordle</span>
             </button>
           </div>
@@ -915,7 +915,7 @@ function renderMath() {
         <div class="level">${mathDisplayLevel()}</div>
         <button class="icon-btn" data-action="go-math-levels">&#9638;</button>
       </div>
-      <div class="core">
+      <div class="core math-core">
         <div class="math-puzzle">
           <canvas id="math-canvas" class="math-canvas"></canvas>
         </div>

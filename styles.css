@@ -36,15 +36,16 @@ body {
 .app {
   width: 100%;
   min-height: 100dvh;
-  padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)) 8px;
+  padding: 0;
 }
 
 .screen {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-height: calc(100dvh - 16px);
+  min-height: 100dvh;
   overflow: hidden;
+  padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)) 8px;
 }
 
 .screen.transition {
@@ -75,7 +76,7 @@ body {
 .menu-right {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   padding-top: 4px;
 }
 
@@ -141,8 +142,8 @@ body {
 }
 
 .side-icon {
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   display: block;
   pointer-events: none;
 }
@@ -212,7 +213,7 @@ body {
 .menu-style {
   margin-top: 12vh;
   gap: 6px;
-  width: min(100%, 312px);
+  width: min(100%, 320px);
 }
 
 .main-btn,
@@ -298,13 +299,6 @@ body {
   display: inline-block;
   width: 16px;
   text-align: center;
-}
-
-.game-icon {
-  width: 16px;
-  height: 16px;
-  display: block;
-  pointer-events: none;
 }
 
 .main-footer {
@@ -463,7 +457,9 @@ textarea {
 .math-puzzle {
   width: 100%;
   max-width: 540px;
-  height: clamp(210px, 42dvh, 460px);
+  height: auto;
+  min-height: 0;
+  flex: 1 1 auto;
   border: 1px solid #262b34;
   border-radius: 6px;
   background: #171b22;
@@ -481,6 +477,7 @@ textarea {
   display: grid;
   grid-template-columns: 1fr 52px 52px auto;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .answer-input {
@@ -508,12 +505,20 @@ textarea {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .key {
   min-height: clamp(42px, 6.2dvh, 49px);
   font-size: clamp(0.92rem, 2.6vw, 1rem);
   font-weight: 300;
+}
+
+.math-core {
+  justify-content: flex-start;
+  gap: 6px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .levels-grid {
@@ -615,7 +620,8 @@ textarea {
   }
 
   .math-puzzle {
-    height: clamp(180px, 34dvh, 310px);
+    flex: 1 1 auto;
+    min-height: 120px;
     padding: 6px;
   }
 
@@ -631,5 +637,15 @@ textarea {
   .answer-btn,
   .help-btn {
     min-width: 46px;
+  }
+
+  .enter-btn {
+    min-width: 76px;
+    font-size: 0.9rem;
+  }
+
+  .key {
+    min-height: clamp(34px, 5.2dvh, 42px);
+    font-size: 0.9rem;
   }
 }
