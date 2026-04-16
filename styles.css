@@ -30,20 +30,21 @@ body {
 
 body {
   display: flex;
-  justify-content: center;
+  justify-content: stretch;
 }
 
 .app {
-  width: min(100%, 560px);
+  width: 100%;
   min-height: 100dvh;
-  padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) 10px;
+  padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)) 8px;
 }
 
 .screen {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-height: calc(100dvh - 20px);
+  min-height: calc(100dvh - 16px);
+  overflow: hidden;
 }
 
 .screen.transition {
@@ -86,6 +87,7 @@ body {
   padding: 8px 8px 12px;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .promo-tile {
@@ -169,6 +171,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 10px;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .menu-core {
@@ -206,9 +210,9 @@ body {
 }
 
 .menu-style {
-  margin-top: 15vh;
+  margin-top: 12vh;
   gap: 6px;
-  width: min(100%, 292px);
+  width: min(100%, 312px);
 }
 
 .main-btn,
@@ -247,7 +251,7 @@ body {
 }
 
 .game-pill {
-  min-height: 53px;
+  min-height: clamp(50px, 7.5vh, 56px);
   border-radius: 1px;
   background: #1a1e25;
   border-color: #252a33;
@@ -294,6 +298,13 @@ body {
   display: inline-block;
   width: 16px;
   text-align: center;
+}
+
+.game-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  pointer-events: none;
 }
 
 .main-footer {
@@ -397,7 +408,7 @@ textarea {
 }
 
 .wordle-board {
-  width: min(100%, 360px);
+  width: min(100%, 342px);
   display: grid;
   gap: 8px;
 }
@@ -437,7 +448,7 @@ textarea {
 }
 
 .wordle-input-wrap {
-  width: min(100%, 360px);
+  width: min(100%, 342px);
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 8px;
@@ -450,8 +461,9 @@ textarea {
 }
 
 .math-puzzle {
-  width: min(100%, 480px);
-  height: min(56dvh, 460px);
+  width: 100%;
+  max-width: 540px;
+  height: clamp(210px, 42dvh, 460px);
   border: 1px solid #262b34;
   border-radius: 6px;
   background: #171b22;
@@ -464,7 +476,8 @@ textarea {
 }
 
 .answer-strip {
-  width: min(100%, 480px);
+  width: 100%;
+  max-width: 540px;
   display: grid;
   grid-template-columns: 1fr 52px 52px auto;
   gap: 8px;
@@ -477,28 +490,29 @@ textarea {
 
 .answer-btn,
 .help-btn {
-  min-height: 50px;
+  min-height: clamp(44px, 6.5dvh, 50px);
   min-width: 52px;
   font-size: 1.05rem;
 }
 
 .enter-btn {
-  min-height: 50px;
-  min-width: 92px;
+  min-height: clamp(44px, 6.5dvh, 50px);
+  min-width: clamp(84px, 18vw, 96px);
   font-size: 1rem;
   letter-spacing: 0.03em;
 }
 
 .numpad {
-  width: min(100%, 480px);
+  width: 100%;
+  max-width: 540px;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 8px;
 }
 
 .key {
-  min-height: 49px;
-  font-size: 1rem;
+  min-height: clamp(42px, 6.2dvh, 49px);
+  font-size: clamp(0.92rem, 2.6vw, 1rem);
   font-weight: 300;
 }
 
@@ -586,8 +600,36 @@ textarea {
   }
 }
 
-@media (min-width: 540px) {
+@media (max-height: 760px) {
+  .hero-title {
+    margin-top: 2.6vh;
+  }
+
+  .menu-style {
+    margin-top: 7vh;
+  }
+
+  .wordle-board,
+  .wordle-input-wrap {
+    width: min(100%, 300px);
+  }
+
   .math-puzzle {
-    height: min(58dvh, 500px);
+    height: clamp(180px, 34dvh, 310px);
+    padding: 6px;
+  }
+
+  .numpad {
+    gap: 6px;
+  }
+
+  .answer-strip {
+    gap: 6px;
+    grid-template-columns: 1fr 46px 46px auto;
+  }
+
+  .answer-btn,
+  .help-btn {
+    min-width: 46px;
   }
 }

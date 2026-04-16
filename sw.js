@@ -10,6 +10,7 @@ const ASSETS = [
   './icons/Quizzly.svg',
   './icons/Quizzly (1).svg',
   './icons/Quizzly (2).svg',
+  './icons/output-onlinepngtools.svg',
   './icons/gear.svg',
   './icons/trophy.svg'
 ];

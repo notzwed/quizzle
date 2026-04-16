@@ -734,10 +734,10 @@ function renderMain() {
         <div class="main-shell">
           <div class="menu-right">
             <button class="icon-btn side" data-action="go-settings" aria-label="Settings">
-              <img src="icons/Quizzly (2).svg" alt="" class="side-icon" />
+              <img src="icons/Quizzly (1).svg" alt="" class="side-icon" />
             </button>
             <button class="icon-btn side" data-action="go-achievements" aria-label="Achievements">
-              <img src="icons/trophy.svg" alt="" class="side-icon" />
+              <img src="icons/Quizzly.svg" alt="" class="side-icon" />
             </button>
           </div>
         </div>
@@ -750,7 +750,7 @@ function renderMain() {
               <span>Math Riddles</span>
             </button>
             <button class="main-btn game-pill" data-action="go-wordle">
-              <span class="grid-icon">&#9638;</span>
+              <img src="icons/output-onlinepngtools.svg" alt="" class="game-icon" />
               <span>Wordle</span>
             </button>
           </div>
@@ -923,7 +923,7 @@ function renderMath() {
           <input class="answer-input" id="math-answer-input" placeholder="Answer" inputmode="numeric" maxlength="6" value="${state.math.input}" />
           <button class="answer-btn" data-action="math-clear">&#10005;</button>
           <button class="help-btn" data-action="math-hint" aria-label="Hint">
-            <img src="icons/gear.svg" alt="" class="hint-icon" />
+            <img src="icons/Quizzly (2).svg" alt="" class="hint-icon" />
           </button>
           <button class="enter-btn" data-action="math-submit">ENTER</button>
         </div>
