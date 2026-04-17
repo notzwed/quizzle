@@ -31,6 +31,7 @@ const MATH_TYPES = [
   'cross-sum',
   'ring-ops'
 ];
+const MAX_MATH_INPUT_LENGTH = 12;
 
 const state = {
   screen: 'main',
@@ -190,7 +191,8 @@ function shuffle(list, rand) {
 }
 
 function computeTier(level) {
-  return 1 + Math.floor((level - 1) / 4);
+  // Keep difficulty growth bounded so very high levels remain playable indefinitely.
+  return Math.min(24, 1 + Math.floor((level - 1) / 4));
 }
 
 function setScreen(screen, animate = true) {
@@ -393,24 +395,34 @@ function buildArithmeticExpression(level, tier, rand) {
   const a = randRange(rand, 2, 9 + Math.floor(tier / 2));
   const b = randRange(rand, 2, 9 + Math.floor(tier / 2));
   const c = randRange(rand, 2, 9 + Math.floor(tier / 2));
-  const d = randRange(rand, 2, 9 + Math.floor(tier / 2));
 
   let expression = '';
   let answer = 0;
 
   if (variant === 0) {
+    const top = a + b * c;
+    const d = randRange(rand, 2, Math.max(2, top - 1));
     expression = `${a} + ${b} * ${c} - ${d} = ?`;
-    answer = a + b * c - d;
+    answer = top - d;
   } else if (variant === 1) {
+    const top = (a + b) * c;
+    const d = randRange(rand, 2, Math.max(2, top - 1));
     expression = `(${a} + ${b}) * ${c} - ${d} = ?`;
-    answer = (a + b) * c - d;
+    answer = top - d;
   } else if (variant === 2) {
+    const d = randRange(rand, 2, 9 + Math.floor(tier / 2));
     const m = b * c;
-    expression = `${m} / ${b} + ${a} - ${d} = ?`;
-    answer = m / b + a - d;
+    const top = m / b + a;
+    const safeD = Math.min(d, Math.max(2, top - 1));
+    expression = `${m} / ${b} + ${a} - ${safeD} = ?`;
+    answer = top - safeD;
   } else {
-    expression = `${a} * ${b} - ${c} * ${d} = ?`;
-    answer = a * b - c * d;
+    const left = a * b;
+    const right = c * randRange(rand, 2, 9 + Math.floor(tier / 2));
+    const top = Math.max(left, right);
+    const bottom = Math.min(left, right);
+    expression = `${top} - ${bottom} = ?`;
+    answer = top - bottom;
   }
 
   return {
@@ -631,11 +643,16 @@ function buildProgressionChain(level, tier, rand) {
 }
 
 function buildCrossSum(level, tier, rand) {
-  const up = randRange(rand, 8, 20 + tier);
   const left = randRange(rand, 3, 12 + Math.floor(tier / 2));
   const right = randRange(rand, 3, 12 + Math.floor(tier / 2));
-  const down = randRange(rand, 4, 15 + Math.floor(tier / 2));
-  const center = up + down - left + right;
+  const verticalMin = Math.max(8, left - right + 2);
+  const up = randRange(rand, Math.max(4, Math.floor(verticalMin / 2)), 20 + tier);
+  let down = randRange(rand, 4, 15 + Math.floor(tier / 2));
+  let center = up + down - left + right;
+  if (center < 1) {
+    down += 1 - center;
+    center = up + down - left + right;
+  }
 
   return {
     type: 'cross-sum',
@@ -647,8 +664,20 @@ function buildCrossSum(level, tier, rand) {
 }
 
 function buildRingOps(level, tier, rand) {
-  const values = Array.from({ length: 6 }, () => randRange(rand, 2, 9 + Math.floor(tier / 2)));
-  const answer = values[0] * values[1] - values[4];
+  const limit = 9 + Math.floor(tier / 2);
+  const a = randRange(rand, 2, limit);
+  const b = randRange(rand, 2, limit);
+  const maxSub = Math.max(2, a * b - 1);
+  const sub = randRange(rand, 2, Math.min(limit, maxSub));
+  const values = [
+    a,
+    b,
+    randRange(rand, 2, limit),
+    randRange(rand, 2, limit),
+    sub,
+    randRange(rand, 2, limit)
+  ];
+  const answer = a * b - sub;
 
   return {
     type: 'ring-ops',
@@ -693,7 +722,12 @@ function generateMathChallenge(level, forReplay = false) {
 
 function getOrCreateMathLevel(level, forReplay = false) {
   const profile = getProfile();
-  if (!profile.mathHistory[level]) {
+  const existing = profile.mathHistory[level];
+  const invalidExisting =
+    existing &&
+    (typeof existing.answer !== 'number' || !Number.isFinite(existing.answer) || existing.answer < 0);
+
+  if (!existing || invalidExisting) {
     profile.mathHistory[level] = generateMathChallenge(level, forReplay);
     saveProfiles();
   }
@@ -920,7 +954,7 @@ function renderMath() {
           <canvas id="math-canvas" class="math-canvas"></canvas>
         </div>
         <div class="answer-strip">
-          <input class="answer-input" id="math-answer-input" placeholder="Answer" inputmode="numeric" maxlength="6" value="${state.math.input}" />
+          <input class="answer-input" id="math-answer-input" placeholder="Answer" inputmode="numeric" maxlength="${MAX_MATH_INPUT_LENGTH}" value="${state.math.input}" />
           <button class="answer-btn" data-action="math-clear">&#10005;</button>
           <button class="help-btn" data-action="math-hint" aria-label="Hint">
             <img src="icons/Quizzly (2).svg" alt="" class="hint-icon" />
@@ -1369,7 +1403,7 @@ app.addEventListener('click', (event) => {
   }
 
   if (action === 'math-digit') {
-    if (state.math.input.length < 6) {
+    if (state.math.input.length < MAX_MATH_INPUT_LENGTH) {
       state.math.input += target.dataset.digit;
       render();
     }
@@ -1416,7 +1450,7 @@ app.addEventListener('click', (event) => {
 
 app.addEventListener('input', (event) => {
   if (event.target.id !== 'math-answer-input') return;
-  const clean = event.target.value.replace(/\D/g, '').slice(0, 6);
+  const clean = event.target.value.replace(/\D/g, '').slice(0, MAX_MATH_INPUT_LENGTH);
   state.math.input = clean;
   event.target.value = clean;
 });
