@@ -32,6 +32,7 @@ const MATH_TYPES = [
   'ring-ops'
 ];
 const MAX_MATH_INPUT_LENGTH = 12;
+const MAX_MATH_ANSWER = 10 ** MAX_MATH_INPUT_LENGTH - 1;
 
 const state = {
   screen: 'main',
@@ -706,6 +707,44 @@ function buildMathByType(type, level, tier, rand) {
   return buildRingOps(level, tier, rand);
 }
 
+function hasRenderableMathData(challenge) {
+  if (!challenge || typeof challenge !== 'object' || !challenge.data) return false;
+  const { type, data } = challenge;
+
+  if (type === 'linear-seq') return typeof data.text === 'string' && data.text.length > 0;
+  if (type === 'pair-equation') return Array.isArray(data.rows) && data.rows.length >= 4;
+  if (type === 'equation-system') return Array.isArray(data.lines) && data.lines.length >= 2;
+  if (type === 'arithmetic-expression' || type === 'exponent-expression') {
+    return typeof data.expression === 'string' && data.expression.length > 0;
+  }
+  if (type === 'triangle-relations') return Boolean(data.t1 && data.t2 && data.t3);
+  if (type === 'squares-grid' || type === 'center-missing') return Array.isArray(data.cells) && data.cells.length === 9;
+  if (type === 'staircase-grid' || type === 'digit-grid-row') return Array.isArray(data.rows) && data.rows.length === 4;
+  if (type === 'octagon-balance') return Array.isArray(data.ring) && data.ring.length === 8;
+  if (type === 'overlap-count') return typeof data.count === 'number';
+  if (type === 'progression-chain') return Array.isArray(data.values) && data.values.length === 5;
+  if (type === 'cross-sum') {
+    return (
+      typeof data.up === 'number' &&
+      typeof data.down === 'number' &&
+      typeof data.left === 'number' &&
+      typeof data.right === 'number'
+    );
+  }
+  if (type === 'ring-ops') return Array.isArray(data.values) && data.values.length === 6;
+  return false;
+}
+
+function isMathChallengeValid(challenge) {
+  if (!challenge || typeof challenge !== 'object') return false;
+  if (!MATH_TYPES.includes(challenge.type)) return false;
+  if (!Number.isInteger(challenge.answer) || challenge.answer < 0 || challenge.answer > MAX_MATH_ANSWER) return false;
+  if (!Array.isArray(challenge.choices) || challenge.choices.length !== 4) return false;
+  if (!challenge.choices.includes(challenge.answer)) return false;
+  if (!challenge.choices.every((choice) => Number.isInteger(choice) && choice >= 0)) return false;
+  return hasRenderableMathData(challenge);
+}
+
 function generateMathChallenge(level, forReplay = false) {
   const profile = getProfile();
   const tier = computeTier(level);
@@ -716,16 +755,18 @@ function generateMathChallenge(level, forReplay = false) {
   const type = chooseMathType(level, profile, rand, forReplay);
   const challenge = buildMathByType(type, level, tier, rand);
 
+  const safeChallenge = isMathChallengeValid(challenge)
+    ? challenge
+    : buildLinearSeq(level, tier, seededRandom(seed + 911));
+
   if (!forReplay) profile.mathNonce += 1;
-  return challenge;
+  return safeChallenge;
 }
 
 function getOrCreateMathLevel(level, forReplay = false) {
   const profile = getProfile();
   const existing = profile.mathHistory[level];
-  const invalidExisting =
-    existing &&
-    (typeof existing.answer !== 'number' || !Number.isFinite(existing.answer) || existing.answer < 0);
+  const invalidExisting = existing && !isMathChallengeValid(existing);
 
   if (!existing || invalidExisting) {
     profile.mathHistory[level] = generateMathChallenge(level, forReplay);
